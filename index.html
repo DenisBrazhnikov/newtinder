@@ -68,18 +68,25 @@
 
             div#card div#bottom {
                 transform-origin: center bottom;
-                transition-delay: 1.5s;
+                transition-delay: .5s;
+                width: 600px;
+                height: 0;
+                top: 300px;
+                z-index: 1;
+                transform: rotate3d(1, 0, 0, -180deg);
+                z-index: 3;
             }
 
             div#card:hover div#bottom {
-                width: 220px;
-            transform: rotate3d(1, 0, 0, -178deg);
-            display: block;
-            transition-delay: .5s;
+                transform: rotate3d(1, 0, 0, 0deg);
+                display: block;
+                transition-delay: .5s;
             }
 
-            div#card:hover div#bottom .message {
-                opacity: 1 !important;
+            div#card div#bottom .message {
+                position: absolute;
+                width: 600px;
+                height: 300px;
             }
     </style>
     <body>
