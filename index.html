@@ -1,0 +1,63 @@
+<html>
+    <head>
+
+    </head>
+    <style>
+            div#card {
+            width: 20%;
+            position: relative;
+            perspective: 1500px;
+
+            }
+
+            div#card div {
+            position: absolute;
+            max-width: 100%;
+            background-color: bisque;
+            width: 100px;
+            height: 100px;
+            transform: rotate3d(0, 0, 0, 0deg);
+            -webkit-filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.6));
+            outline: 1px solid transparent;
+            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.6));
+            transition-property: transform;
+            transition-duration: 1s;
+            }
+
+            #first {
+                width: 100px;
+                height: 100px;
+                background-color: aqua;
+            }
+
+            div#card div#right {
+            transform-origin: top right;
+            transition-delay: 3s;
+            }
+
+            div#card:hover div#right {
+            transform: rotate3d(0, 1, 0, 180deg);
+            transition-delay: 0s;
+            }
+
+            div#card div#bottom {
+                /*display: none;*/
+            transform-origin: center bottom;
+            transition-delay: 1.5s;
+            }
+
+            div#card:hover div#bottom {
+            transform: rotate3d(1, 0, 0, -178deg);
+            display: block;
+            width: 200px;
+            transition-delay: .5s;
+            }
+    </style>
+    <body>
+        <div id="card">
+            <div id="first"></div>
+            <div id="bottom"></div>
+            <div id="right"></div>
+        </div>
+    </body>
+</html>
