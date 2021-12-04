@@ -4,35 +4,32 @@
     </head>
     <style>
             div#card {
-            width: 20%;
-            position: relative;
-            perspective: 1500px;
+                width: 800px;
+                height: 800px;
+                position: relative;
+                perspective: 1500px;
             }
 
             div#card div.parts {
-            position: absolute;
-            z-index: 0;
-            max-width: 100%;
-            background-color: bisque;
-            padding: 10px;
-            width: 100px;
-            height: 100px;
-            transform: rotate3d(0, 0, 0, 0deg);
-            outline: 1px solid transparent;
-            transition-property: transform, opacity;
-            transition-duration: 1s;
+                position: absolute;
+                z-index: 0;
+                max-width: 100%;
+                background-color: bisque;
+                padding: 10px;
+                width: 300px;
+                height: 300px;
+                transform: rotate3d(0, 0, 0, 0deg);
+                outline: 1px solid transparent;
+                transition-property: transform, opacity;
+                transition-duration: .1s;
+                padding: 0;
             }
 
             #first {
-                width: 100px;
-                height: 100px;
-                z-index: 9999 !important;
+                width: 300px;
+                height: 300px;
+                z-index: 1!important;
                 background-color: aqua;
-            }
-
-            .parts#right .message {
-                opacity: 0;
-                transform: rotateY(180deg);
             }
 
             .parts#bottom .message {
@@ -41,25 +38,37 @@
             }
 
             div#card div#right {
-            transform-origin: top right;
-            transition-delay: 3s;
+                transform-origin: top right;
+                transition-delay: 0s;
+                z-index: 2;
+                left: 300px;
+                width: 0;
+                transform: rotate3d(0, 1, 0, -180deg);
             }
 
             div#card:hover div#right {
-            transform: rotate3d(0, 1, 0, 180deg);
-            transition-delay: 0s;
+                transition-delay: 0s;
+                /* transform: rotate3d(0, 1, 0, 0deg); */
+            }
+
+            #right .message {
+                background: blue;
+                position: absolute;
+                display: block;
+                width: 300px;
+                height: 300px;
             }
 
             div#card:hover div#right .message {
                 opacity: 1;
                 transition-property: opacity;
-            transition-duration: 1s;
-            transition-delay: 1s;
+                transition-duration: 1s;
+                transition-delay: 1s;
             }
 
             div#card div#bottom {
-            transform-origin: center bottom;
-            transition-delay: 1.5s;
+                transform-origin: center bottom;
+                transition-delay: 1.5s;
             }
 
             div#card:hover div#bottom {
@@ -92,7 +101,7 @@
             </div>
         </div>
 
-        <div style="height: 200px; width: 200px; background-color: blueviolet;" id="fuck">
+        <!-- <div style="height: 200px; width: 200px; background-color: blueviolet;" id="fuck"> -->
 
         </div>
     </body>
@@ -100,16 +109,94 @@
     <script>
     document.addEventListener('touchstart', handleTouchStart, false);
     document.addEventListener('touchmove', handleTouchMove, false);
+    document.addEventListener('touchend', handleTouchEnd, false);
+        const STATE_FIRST = 0;
+        const STATE_SECOND = 1;
+        const STATE_THIRD = 2;
+
+        const DEGRESS_MAX = 0;
+        const DEGRESS_MIN = -180;
+        const DEGRESS_THRESHOLD = -90;
+
+        var cardState = STATE_FIRST;
+        let degress = 0;
+
+        var rightCardMessage = document.getElementById("right").getElementsByClassName("message")[0];
+
+        var startX;
+        var startY;
+
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value))
+        }
+
         function handleTouchStart(event) {
             const firstTouch = event.touches[0];
-             x1 = firstTouch.clientX; 
-             yl = firstTouch.clientV 
-             // console.log(x1, yl); 
+             startX = firstTouch.clientX; 
+             startY = firstTouch.clientV 
+             console.log('handleTouchStart', startX, startY); 
         }
+        function handleTouchEnd(event) {
+            if (cardState < STATE_THIRD && degress > DEGRESS_THRESHOLD) {
+                setState(state + 1);
+            }
+        }
+
         function handleTouchMove(event) {
-        let x2 = event.touches[0].clientX;
-         let y2 = event.touches[0].clientY; 
-         console.log(x2, y2);
+            const cardWidth = rightCardMessage.offsetWidth;
+            let axis;
+            let diff;
+            let elementId;
+
+            switch (cardState) {
+                case STATE_FIRST:
+                    diff = Math.max(0, startX - event.touches[0].clientX);
+                    axis = 'y';
+                    elementId = 'right';
+                    break;
+                case STATE_SECOND:
+                    diff = Math.max(0, startY - event.touches[0].clientY);
+                    axis = 'x';
+                    elementId = 'bottom';
+                    break;
+                default:
+                    return;
+            }
+
+            degress = clamp(-Math.floor(diff * 180 / (cardWidth * 2)), -180, 0);
+
+console.log(diff, degress);
+
+            setDegress(elementId, degress, axis);
+        }
+
+        function setDegress(elementId, degress, axis) {
+            const element = document.getElementById(elementId);
+            let axisX = axis == 'x' ? 1 : 0;
+            let axisY = axis == 'y' ? 1 : 0;
+            let axisZ = axis == 'z' ? 1 : 0;
+            if (!element) {
+                throw new `Element not found: #${elementId}`;
+            }
+            element.style.transform = `rotate3d(${axisX}, ${axisY}, ${axisZ} , ${degress}deg)`;
+        }
+
+        function setState(newState) {
+            switch (newState) {
+                case STATE_FIRST:
+                    setDegress('right', DEGRESS_MIN, 'y');
+                    setDegress('bottom', DEGRESS_MIN, 'x');
+                    break;
+                case STATE_SECOND:
+                    setDegress('right', DEGRESS_MAX, 'y');
+                    setDegress('bottom', DEGRESS_MIN, 'x');
+                    break;
+                case STATE_THIRD:
+                    setDegress('right', DEGRESS_MAX, 'y');
+                    setDegress('bottom', DEGRESS_MAX, 'x');
+                    break;
+            }
+            cardState = newState;
         }
 
     </script>
