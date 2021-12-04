@@ -5,7 +5,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" integrity="sha384-jLKHWM3JRmfMU0A5x5AkjWkw/EYfGUAGagvnfryNV3F9VqM98XiIH7VBGVoxVSc7" crossorigin="anonymous">
     <style>
+        body {
+            overscroll-behavior: contain;
+        }
+
         .parent {
             position: relative;
             perspective: 2000px;
@@ -20,16 +27,14 @@
             position: absolute;
             border: 1px solid #ececec;
             background-color: burlywood;
-            
-            
+            color: transparent;
             display: none;
             transform-origin: 0 0;
-            transition: transform .1s ease-in-out;
+            transition: transform, opacity .1s ease-in-out;
         }
 
         #first {
             transform: rotateY(0deg);
-            color: white;
             text-align: right;
             z-index: 1;
             left: 10px;
@@ -46,33 +51,37 @@
         }
 
         #third {
-            transform: rotateX(360deg);
+            transform: rotateX(180deg);
             text-align: center;
             z-index: 3;
             width: 240px;
+            opacity: 0.6;
             left: 10px;
             top: 150px;
         }
     </style>
     <body>
         <div class="parent">
-            <div class="card" id="first">I'd like to erewreretreg  trter tretretv</div>
+            <div class="card animate__shakeX animate__infinite" id="first">I'd like to erewreretreg  trter tretretv</div>
             <div class="card" id="second">that you te tret rtretre trtrtare</div>
             <div class="card" id="third">t ert re tre tret rrew twr treter tre te y tr ytytyty rtytry rt ytryty tr  e tret tr</div>
           </div> 
     </body>
 
     <script>
-    document.addEventListener('touchstart', handleTouchStart, false);
-    document.addEventListener('touchmove', handleTouchMove, false);
-    document.addEventListener('touchend', handleTouchEnd, false);
+        document.addEventListener('touchstart', handleTouchStart, false);
+        document.addEventListener('touchmove', handleTouchMove, false);
+        document.addEventListener('touchend', handleTouchEnd, false);
+        var TOUCH_MOVES = false;
         const STATE_FIRST = 0;
         const STATE_SECOND = 1;
         const STATE_THIRD = 2;
 
+        const FUCKING_EASING = 'all 1.3s cubic-bezier(0.22, 1, 0.36, 1)';
+
         const DEGRESS_MAX = 0;
         const DEGRESS_MIN = -180;
-        const DEGRESS_THRESHOLD = -90;
+        const DEGRESS_THRESHOLD = 95;
 
         var cardState = STATE_FIRST;
         let degress = 0;
@@ -94,12 +103,18 @@
         }
 
         function handleTouchEnd(event) {
-            if (cardState < STATE_THIRD && degress > DEGRESS_THRESHOLD) {
-                setState(cardState + 1);
+            if (cardState < STATE_THIRD && degress < DEGRESS_THRESHOLD && TOUCH_MOVES) {
+                cardState = cardState + 1;
+                setState(cardState++);
+            } else {
+                refreshState(cardState);
             }
+
+            TOUCH_MOVES = false;
         }
 
         function handleTouchMove(event) {
+            TOUCH_MOVES = true;
             const cardWidth = rightCard.offsetWidth;
             let axis;
             let diff;
@@ -108,6 +123,7 @@
             switch (cardState) {
                 case STATE_FIRST:
                     diff = startX - event.touches[0].clientX;
+                    initState();
                     axis = 'y';
                     elementId = 'second';
                     break;
@@ -127,7 +143,7 @@
             setDegress(elementId, degress, axis);
         }
 
-        function setDegress(elementId, degress, axis, displayText = false) {
+        function setDegress(elementId, degress, axis, displayText = false, selfEnding = false) {
             let element = document.getElementById(elementId);
             let axisX = axis == 'x' ? 1 : 0;
             let axisY = axis == 'y' ? 1 : 0;
@@ -136,30 +152,68 @@
                 throw new `Element not found: #${elementId}`;
             }
 
-            if(displayText || degress < 95) {
+            if(displayText || degress < DEGRESS_THRESHOLD) {
                 element.style.color = 'white';
-                //element.style.opacity = 1;
+                element.style.opacity = 1;
+            } else {
+                element.style.color = 'transparent';
+
+                if(cardState) {
+                    element.style.opacity = '0.6';
+                }
             }
 
-            //element.style.opacity = 1 - degress / 180;
+            if(selfEnding) {
+                element.style.transition = FUCKING_EASING;
+            } else {
+                element.style.transition = 'none';
+            }
+
+            if(cardState > 1) {
+                element.style.opacity = 1 - degress / 180;
+            }
             console.log( 1.5 -  degress / 180);
             
             element.style.transform = `rotate3d(${axisX}, ${axisY}, ${axisZ} , ${degress}deg)`;
             element.style.display = 'block';
         }
 
-        function setState(newState) {
-            console.trace();
-            switch (newState) {
+        function initState() {
+            let first = document.getElementById('first');
+            first.style.color = 'white';
+        }
+
+        function refreshState(cardState) {
+            switch (cardState) {
                 case STATE_FIRST:
-                    //setDegress('right', DEGRESS_MIN, 'y');
-                    //setDegress('bottom', DEGRESS_MIN, 'x');
+                    let second = document.getElementById('second');
+                    second.style.transition = FUCKING_EASING;
+                    second.style.color = 'transparent';
+                    second.style.transform = 'rotateY(180deg)';
                     break;
                 case STATE_SECOND:
-                    setDegress('second', 0, 'y', true);
+                    let third = document.getElementById('third');
+                    third.style.transition = FUCKING_EASING;
+                    third.style.transform = 'rotateX(180deg)';
+                    third.style.color = 'transparent';
+                    third.style.opacity = '0';
                     break;
                 case STATE_THIRD:
                     setDegress('third', 0, 'x', true);
+                    break;
+            }
+        }
+
+        function setState(newState) {
+            switch (newState) {
+                case STATE_FIRST:
+                    
+                    break;
+                case STATE_SECOND:
+                    setDegress('second', 0, 'y', true, true);
+                    break;
+                case STATE_THIRD:
+                    setDegress('third', 0, 'x', true, true);
                     break;
             }
             cardState = newState;
