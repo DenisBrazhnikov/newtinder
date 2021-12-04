@@ -1,89 +1,65 @@
-<html>
+<html>  
     <head>
 
     </head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles&display=swap" rel="stylesheet">
     <style>
-            div#card {
-                width: 800px;
-                height: 800px;
-                position: relative;
-                perspective: 1500px;
-            }
+        .parent {
+            position: relative;
+            perspective: 2000px;
+        }
 
-            div#card div.parts {
-                position: absolute;
-                z-index: 0;
-                max-width: 100%;
-                background-color: bisque;
-                width: 300px;
-                height: 300px;
-                transform: rotate3d(0, 0, 0, 0deg);
-                outline: 1px solid transparent;
-                transition-property: transform, opacity;
-                transition-duration: 2s;
-                backface-visibility: hidden;
-            }
+        .card {  
+            font-family: 'Fuzzy Bubbles', cursive;
+            font-size: 15px;
+            width: 100px;
+            height: 100px;
+            padding: 20px;
+            position: absolute;
+            border: 1px solid #ececec;
+            background-color: burlywood;
+            
+            
+            display: none;
+            transform-origin: 0 0;
+            transition: transform .1s ease-in-out;
+        }
 
-            #first {
-                width: 300px;
-                height: 300px;
-                z-index: 1!important;
-                background-color: aqua;
-            }
+        #first {
+            transform: rotateY(0deg);
+            color: white;
+            text-align: right;
+            z-index: 1;
+            left: 10px;
+            top: 10px;
+            display: block;
+        }
 
-            .parts#bottom .message {    
-                background: blue;
-                position: absolute;
-                display: block;
-                width: 600px;
-                height: 300px;
-            }
+        #second {
+            transform: rotateY(180deg);
+            text-align: left;
+            z-index: 2;
+            left: 150px;
+            top: 10px;
+        }
 
-            div#card div#right {
-                transform-origin: top right;
-                transition-delay: 0s;
-                z-index: 2;
-                left: 300px;
-                width: 0;
-                transform: rotate3d(0, 1, 0, -180deg);
-            }
-
-            #right .message {
-                background: blue;
-                position: absolute;
-                display: block;
-                width: 300px;
-                height: 300px;
-            }
-
-            div#card div#bottom {
-                transform-origin: center bottom;
-                transform: rotate3d(1, 0, 0, -180deg);
-                width: 600px;
-                height: 0;
-                top: 300px;
-                z-index: 1;
-                display: none;
-            }
+        #third {
+            transform: rotateX(360deg);
+            text-align: center;
+            z-index: 3;
+            width: 240px;
+            left: 10px;
+            top: 150px;
+        }
     </style>
     <body>
-        <div id="card">
-            <div class="parts" id="first">
-                <div class="message">
-                    first message to display
-                </div>
-            </div>
-            <div class="parts" id="right">
-                <div class="message">
-                    second message to display
-                </div>
-            </div>
-            <div class="parts" id="bottom">
-                <div class="message">
-                    third message to display
-                </div>
-            </div>
-        </div>
+        <div class="parent">
+            <div class="card" id="first">I'd like to erewreretreg  trter tretretv</div>
+            <div class="card" id="second">that you te tret rtretre trtrtare</div>
+            <div class="card" id="third">t ert re tre tret rrew twr treter tre te y tr ytytyty rtytry rt ytryty tr  e tret tr</div>
+          </div> 
     </body>
 
     <script>
@@ -101,7 +77,7 @@
         var cardState = STATE_FIRST;
         let degress = 0;
 
-        var rightCardMessage = document.getElementById("right").getElementsByClassName("message")[0];
+        var rightCard = document.getElementById("first");
 
         var startX;
         var startY;
@@ -116,6 +92,7 @@
              startY = firstTouch.clientY;
              console.log('handleTouchStart', startX, startY); 
         }
+
         function handleTouchEnd(event) {
             if (cardState < STATE_THIRD && degress > DEGRESS_THRESHOLD) {
                 setState(cardState + 1);
@@ -123,34 +100,34 @@
         }
 
         function handleTouchMove(event) {
-            const cardWidth = rightCardMessage.offsetWidth;
+            const cardWidth = rightCard.offsetWidth;
             let axis;
             let diff;
             let elementId;
 
             switch (cardState) {
                 case STATE_FIRST:
-                    diff = Math.max(0, startX - event.touches[0].clientX);
+                    diff = startX - event.touches[0].clientX;
                     axis = 'y';
-                    elementId = 'right';
+                    elementId = 'second';
                     break;
                 case STATE_SECOND:
-                    diff = Math.max(0, startY - event.touches[0].clientY);
+                    diff = startY - event.touches[0].clientY;
                     axis = 'x';
-                    elementId = 'bottom';
+                    elementId = 'third';
                     break;
                 default:
                     return;
             }
 
-            degress = clamp(-Math.floor(diff * 180 / (cardWidth * 2)), -180, 0);
+            degress = clamp(180 - Math.floor(-diff * 180 / (cardWidth * 2)), 0, 180);
 
             console.log(diff, degress);
             // super smoooooth
             setDegress(elementId, degress, axis);
         }
 
-        function setDegress(elementId, degress, axis) {
+        function setDegress(elementId, degress, axis, displayText = false) {
             let element = document.getElementById(elementId);
             let axisX = axis == 'x' ? 1 : 0;
             let axisY = axis == 'y' ? 1 : 0;
@@ -158,6 +135,15 @@
             if (!element) {
                 throw new `Element not found: #${elementId}`;
             }
+
+            if(displayText || degress < 95) {
+                element.style.color = 'white';
+                //element.style.opacity = 1;
+            }
+
+            //element.style.opacity = 1 - degress / 180;
+            console.log( 1.5 -  degress / 180);
+            
             element.style.transform = `rotate3d(${axisX}, ${axisY}, ${axisZ} , ${degress}deg)`;
             element.style.display = 'block';
         }
@@ -166,15 +152,14 @@
             console.trace();
             switch (newState) {
                 case STATE_FIRST:
-                    setDegress('right', DEGRESS_MIN, 'y');
-                    setDegress('bottom', DEGRESS_MIN, 'x');
+                    //setDegress('right', DEGRESS_MIN, 'y');
+                    //setDegress('bottom', DEGRESS_MIN, 'x');
                     break;
                 case STATE_SECOND:
-                    setDegress('right', DEGRESS_MAX, 'y');
-                    setDegress('bottom', DEGRESS_MIN, 'x');
+                    setDegress('second', 0, 'y', true);
                     break;
                 case STATE_THIRD:
-                    setDegress('bottom', DEGRESS_MAX, 'x');
+                    setDegress('third', 0, 'x', true);
                     break;
             }
             cardState = newState;
