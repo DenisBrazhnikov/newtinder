@@ -7,27 +7,37 @@
             width: 20%;
             position: relative;
             perspective: 1500px;
-
             }
 
-            div#card div {
+            div#card div.parts {
             position: absolute;
+            z-index: 0;
             max-width: 100%;
             background-color: bisque;
+            padding: 10px;
             width: 100px;
             height: 100px;
             transform: rotate3d(0, 0, 0, 0deg);
-            -webkit-filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.6));
             outline: 1px solid transparent;
-            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.6));
-            transition-property: transform;
+            transition-property: transform, opacity;
             transition-duration: 1s;
             }
 
             #first {
                 width: 100px;
                 height: 100px;
+                z-index: 9999 !important;
                 background-color: aqua;
+            }
+
+            .parts#right .message {
+                opacity: 0;
+                transform: rotateY(180deg);
+            }
+
+            .parts#bottom .message {
+                opacity: 0;
+                transform: rotateX(180deg);
             }
 
             div#card div#right {
@@ -40,24 +50,67 @@
             transition-delay: 0s;
             }
 
+            div#card:hover div#right .message {
+                opacity: 1;
+                transition-property: opacity;
+            transition-duration: 1s;
+            transition-delay: 1s;
+            }
+
             div#card div#bottom {
-                /*display: none;*/
             transform-origin: center bottom;
             transition-delay: 1.5s;
             }
 
             div#card:hover div#bottom {
+                width: 220px;
             transform: rotate3d(1, 0, 0, -178deg);
             display: block;
-            width: 200px;
             transition-delay: .5s;
+            }
+
+            div#card:hover div#bottom .message {
+                opacity: 1 !important;
             }
     </style>
     <body>
         <div id="card">
-            <div id="first"></div>
-            <div id="bottom"></div>
-            <div id="right"></div>
+            <div class="parts" id="first">
+                <div class="message">
+                    first message to display
+                </div>
+            </div>
+            <div class="parts" id="right">
+                <div class="message">
+                    second message to display
+                </div>
+            </div>
+            <div class="parts" id="bottom">
+                <div class="message">
+                    third message to display
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 200px; width: 200px; background-color: blueviolet;" id="fuck">
+
         </div>
     </body>
+
+    <script>
+    document.addEventListener('touchstart', handleTouchStart, false);
+    document.addEventListener('touchmove', handleTouchMove, false);
+        function handleTouchStart(event) {
+            const firstTouch = event.touches[0];
+             x1 = firstTouch.clientX; 
+             yl = firstTouch.clientV 
+             // console.log(x1, yl); 
+        }
+        function handleTouchMove(event) {
+        let x2 = event.touches[0].clientX;
+         let y2 = event.touches[0].clientY; 
+         console.log(x2, y2);
+        }
+
+    </script>
 </html>
