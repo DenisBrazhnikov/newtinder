@@ -31,8 +31,7 @@
                 background-color: aqua;
             }
 
-            .parts#bottom .message {
-                transform: rotateX(180deg);
+            .parts#bottom .message {    
                 background: blue;
                 position: absolute;
                 display: block;
@@ -59,8 +58,10 @@
 
             div#card div#bottom {
                 transform-origin: center bottom;
-                transform: rotate3d(1, 0, 0, 360deg);
+                transform: rotate3d(1, 0, 0, -180deg);
                 width: 600px;
+                height: 0;
+                top: 300px;
                 z-index: 1;
                 display: none;
             }
@@ -112,7 +113,7 @@
         function handleTouchStart(event) {
             const firstTouch = event.touches[0];
              startX = firstTouch.clientX; 
-             startY = firstTouch.clientV 
+             startY = firstTouch.clientY;
              console.log('handleTouchStart', startX, startY); 
         }
         function handleTouchEnd(event) {
@@ -165,17 +166,15 @@
             console.trace();
             switch (newState) {
                 case STATE_FIRST:
-                setDegress('right', DEGRESS_MAX, 'y');
-                    //setDegress('right', DEGRESS_MIN, 'y');
-                    //setDegress('bottom', DEGRESS_MIN, 'x');
+                    setDegress('right', DEGRESS_MIN, 'y');
+                    setDegress('bottom', DEGRESS_MIN, 'x');
                     break;
                 case STATE_SECOND:
-                setDegress('bottom', 180, 'x');
-                    //setDegress('bottom', DEGRESS_MIN, 'x');
+                    setDegress('right', DEGRESS_MAX, 'y');
+                    setDegress('bottom', DEGRESS_MIN, 'x');
                     break;
                 case STATE_THIRD:
-                    //setDegress('right', DEGRESS_MAX, 'y');
-                    setDegress('bottom', 180, 'x');
+                    setDegress('bottom', DEGRESS_MAX, 'x');
                     break;
             }
             cardState = newState;
