@@ -22,6 +22,12 @@
             margin-top: 100px;
         }
 
+        #help {
+            position: fixed;
+            bottom: 10%;
+            left: 40px;
+        }
+
         #buttons {
             position: absolute;
             bottom: -70px;
@@ -108,7 +114,8 @@
                 <button onclick="jsConfetti.addConfetti();" style="margin-right: 30px; color: #40b71a;"><i class="fa fa-heart"></i></button>
                 <button onclick="history.back();" style="color: red;"><i class="fa fa-times"></i></button>
             </div>
-        </div> 
+        </div>
+        <div id="help">Swype right then down to open the valentine</div>
     </body>
 
     <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
@@ -263,6 +270,8 @@
                     let buttons = document.getElementById('buttons');
                     buttons.style.opacity = '1';
                     buttons.style.visibility = 'visible';
+                    let help = document.getElementById('help');
+                    help.style.display = 'none';
                     break;
             }
             cardState = newState;
