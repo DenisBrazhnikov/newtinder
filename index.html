@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" integrity="sha384-jLKHWM3JRmfMU0A5x5AkjWkw/EYfGUAGagvnfryNV3F9VqM98XiIH7VBGVoxVSc7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
             overscroll-behavior: contain;
@@ -17,6 +17,32 @@
         .parent {
             position: relative;
             perspective: 2000px;
+            width: 262px;
+            height: 242px;
+            margin: 0 auto;
+            margin-top: 100px;
+        }
+
+        #buttons {
+            position: absolute;
+            bottom: -70px;
+            width: 100%;
+            height: 50px;
+            text-align: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        #buttons button {
+            border-radius: 50%;
+            border: none;
+            height: 40px;
+            width: 40px;
+            margin-top: 10px;
+            font-size: 20px;
+            background: #0000000a;
+            box-shadow: 0px 0px 20px 1px #00000045;
         }
 
         .card {  
@@ -38,8 +64,6 @@
             transform: rotateY(0deg);
             text-align: right;
             z-index: 1;
-            left: 10px;
-            top: 10px;
             display: block;
         }
 
@@ -47,8 +71,7 @@
             transform: rotateY(180deg);
             text-align: left;
             z-index: 2;
-            left: 140px;
-            top: 10px;
+            left: 130px;
         }
 
         #third {
@@ -57,8 +80,7 @@
             z-index: 3;
             width: 240px;
             opacity: 0.6;
-            left: 10px;
-            top: 130px;
+            top: 120px;
         }
     </style>
     <body>
@@ -66,7 +88,7 @@
             <div class="card" id="first">
                 Когда
                 <br> 
-                тебя то 
+                тебя, то 
                 <br>
                 вспомнил
                 <br>
@@ -82,10 +104,17 @@
                 с доски
             </div>
             <div class="card" id="third">тоже хочеться сфоткать и все сделать дома уже</div>
+            <div id="buttons">
+                <button onclick="jsConfetti.addConfetti();" style="margin-right: 30px; color: #40b71a;"><i class="fa fa-heart"></i></button>
+                <button style="color: red;"><i class="fa fa-times"></i></button>
+            </div>
           </div> 
     </body>
 
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
     <script>
+        const jsConfetti = new JSConfetti()
+
         document.addEventListener('touchstart', handleTouchStart, false);
         document.addEventListener('touchmove', handleTouchMove, false);
         document.addEventListener('touchend', handleTouchEnd, false);
@@ -231,6 +260,9 @@
                     break;
                 case STATE_THIRD:
                     setDegress('third', 0, 'x', true, true);
+                    let buttons = document.getElementById('buttons');
+                    buttons.style.opacity = '1';
+                    buttons.style.visibility = 'visible';
                     break;
             }
             cardState = newState;
